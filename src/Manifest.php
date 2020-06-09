@@ -25,19 +25,10 @@ class Manifest extends Repository
     public function __construct($path, bool $cache = false, bool $mtime = false, ?callable $onload = null, ?callable $onsave = null)
     {
         if (! file_exists($path)) {
-            throw new InvalidArgumentException("Manifest file doesn't exist");
-        }
-
-        if ($path instanceof Store) {
-            $data = $path->all();
-        }
-        elseif (is_array($path)) {
-            $data = $path;
-        }
-        else {
-            $data = [];
+            Manifest::dumpFile($path, []);
         }
         
+        $data = [];
         $this->path = $path;
         $this->format = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
