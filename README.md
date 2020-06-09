@@ -5,6 +5,7 @@
 ___
 
 SOMA (*Slim Open Modular Framework*) is a lightweight PHP micro-framework, designed to provide the bare essentials and lay a foundation for a developer to modularly put together their application without the framework getting in the way. `soma/soma` is the core that provides config loading, DI container, environment loading, service providers, facades, class aliases and a command line interface.
+___
 
 ## Installation
 
