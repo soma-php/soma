@@ -1,7 +1,7 @@
 {
     "name": "soma/soma",
     "license": "MIT",
-    "description": "Soma is a lightweight PHP micro-framework designed to be a flexible and modular base for your future projects.",
+    "description": "SOMA is a lightweight PHP micro-framework designed to be a flexible and modular base for your future projects.",
     "homepage": "https://github.com/soma-php/soma",
     "autoload": {
         "psr-4": {
