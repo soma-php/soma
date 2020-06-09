@@ -1,14 +1,13 @@
-SOMA Framework
-==============
+# SOMA Framework
 
-Soma is a lightweight PHP micro-framework, designed to provide the bare essentials and lay a foundation for a developer to modularly put together their application without the framework getting in the way. `soma/framework` is the core that provides config loading, DI container, environment loading, service providers, facades, class aliases and a command line interface.
+SOMA, *Slim Open Modular Framework*, is a lightweight PHP micro-framework, designed to provide the bare essentials and lay a foundation for a developer to modularly put together their application without the framework getting in the way. `soma/soma` is the core that provides config loading, DI container, environment loading, service providers, facades, class aliases and a command line interface.
 
 ## Installation
 
 *Soma requires composer for dependency management*
 
 ```sh
-composer require soma/framework
+composer require soma/soma
 ```
 
 If you want to start an entirely new project rather than integrating it into your current solution you can use [soma/project](https://github.com/soma-php/project) as scaffolding:
@@ -130,7 +129,7 @@ $appName = config('app.name');
 
 ### Services
 
-The service providers are how you can modularly add in functionality to your application. The `ServiceProvider` class has been designed to be compatible with `Illuminate\Support\ServiceProvider` and should be able to register them as well as long as they don't call any Laravel specific code. It's also been designed according to the now deprecated [ContainerInterop](https://github.com/container-interop/service-provider) standard. Unfortunately the extension definitions have the arguments reversed in Soma for compatibility with PHP-DI, the container library. A typical `ServiceProvider` may look like the following:
+The service providers are how you can modularly add in functionality to your application. The `ServiceProvider` class has been designed to be compatible with `Illuminate\Support\ServiceProvider` and should be able to register them as well as long as they don't call any Laravel specific code. It's also been designed according to the now deprecated [ContainerInterop](https://github.com/container-interop/service-provider) standard. Unfortunately the extension definitions have the arguments reversed in SOMA for compatibility with PHP-DI, the container library. A typical `ServiceProvider` may look like the following:
 
 ```php
 <?php namespace MyApp\Providers;
@@ -180,11 +179,11 @@ class RoutingProvider extends ServiceProvider
 }
 ```
 
-All definitions from `getExtensions` are automatically wrapped with `DI\decorate` so that those changes gets applied whenever you resolve a definition from the container. However, you can use any [PHP-DI definition type](http://php-di.org/doc/php-definitions.html#definition-types) for both `getFactories` and `getExtensions` and the result of latter isn't wrapped if it's already been wrapped by PHP-DI.
+All definitions from `getExtensions` are automatically wrapped with `DI\decorate` so that those changes gets applied whenever you resolve a definition from the container. However, you can use any [PHP-DI definition type](http://php-di.org/doc/php-definitions.html#definition-types) for both `getFactories` and `getExtensions` and the result of the latter isn't wrapped if it's already been wrapped by PHP-DI.
 
 ### Commands
 
-The console engine is built on `Illuminate\Console` and the commands are defined in the same manner as in [Laravel 5.7](https://laravel.com/docs/5.7/artisan). For example:
+The console engine is built on `Illuminate\Console` and the commands are defined in the same manner as in [Laravel 7.0](https://laravel.com/docs/7.0/artisan). For example:
 
 ```php
 <?php namespace MyApp\Commands;
@@ -243,7 +242,7 @@ All paths registered under the cache namespace (e.g. `cache.storage`) can be aut
 
 ### Helpers
 
-The file [helpers.php](https://github.com/soma-php/framework/blob/master/src/helpers.php) contain a couple of functions that are meant to simplify either calling app services or work with certain types of data. The framework also depends on `illuminate\support` that provide [a whole bunch of helpers](https://github.com/illuminate/support/tree/3e2810145f37eb89fa11759781ee88ee1c1a5262) for you to make use of.
+The file [helpers.php](https://github.com/soma-php/soma/blob/master/src/helpers.php) contain a couple of functions that are meant to simplify either calling app services or work with certain types of data. There's also useful classes for working with data-sets like `Soma\Store`, `Soma\Repository` and `Soma\Manifest`. The framework also depends on `illuminate\support` that provide [a whole bunch of helpers](https://github.com/illuminate/support/tree/826782d01ec7a0befe26b106713822df5933ee69) for you to make use of.
 
 ## License
 
