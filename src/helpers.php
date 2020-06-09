@@ -1,8 +1,12 @@
 <?php
 
-/*--------------------------------------------------*/
-
 if (! function_exists('app')) {
+    /**
+     * Resolve a dependency from the container
+     *
+     * @param string|null $abstract If null then the \Soma\Application instance itself
+     * @return mixed
+     */
     function app($abstract = null)
     {
         $app = \Soma\Application::getInstance();
@@ -16,41 +20,72 @@ if (! function_exists('app')) {
 }
 
 if (! function_exists('should_optimize')) {
-    function should_optimize()
+    /**
+     * Checks whether APP_OPTIMIZE is true
+     *
+     * @return boolean
+     */
+    function should_optimize() : bool
     {
         return app()->isPerformanceMode();
     }
 }
 
 if (! function_exists('is_debug')) {
-    function is_debug()
+    /**
+     * Checks whether APP_DEBUG is true
+     *
+     * @return boolean
+     */
+    function is_debug() : bool
     {
         return app()->isDebug();
     }
 }
 
 if (! function_exists('is_ajax')) {
-    function is_ajax()
+    /**
+     * Checks if the application is responding to an AJAX request
+     *
+     * @return boolean
+     */
+    function is_ajax() : bool
     {
         return app()->isAjaxRequest();
     }
 }
 
 if (! function_exists('is_cli')) {
-    function is_cli()
+    /**
+     * Checks if the application is run via the command line interface
+     *
+     * @return boolean
+     */
+    function is_cli() : bool
     {
         return app()->isCommandLine();
     }
 }
 
 if (! function_exists('is_web')) {
-    function is_web()
+    /**
+     * Checks if the application is responding to a regular web request
+     *
+     * @return boolean
+     */
+    function is_web() : bool
     {
         return app()->isWebRequest();
     }
 }
 
 if (! function_exists('app_stage')) {
+    /**
+     * Test string against APP_STAGE
+     *
+     * @param [$test] If omitted then the current stage will be returned
+     * @return boolean|string
+     */
     function app_stage($test = '')
     {
         if (! empty($test)) {
@@ -64,12 +99,12 @@ if (! function_exists('app_stage')) {
 
 if (! function_exists('app_path')) {
     /**
-     * Get the path to the application folder.
+     * Get the path to the application folder or a resource relative to its root
      *
-     * @param  string  $path
+     * @param string [$path] 
      * @return string
      */
-    function app_path($path = '')
+    function app_path($path = '') : string
     {
         return app()->getRootPath($path);
     }
@@ -77,26 +112,38 @@ if (! function_exists('app_path')) {
 
 if (! function_exists('app_url')) {
     /**
-     * Get the uri to the application folder.
+     * Get the URL to the application folder or a resource relative to its root
      *
-     * @param  string  $uri
+     * @param string [$url] 
      * @return string
      */
-    function app_url($url = '')
+    function app_url($url = '') : string
     {
         return app()->getRootUrl($url);
     }
 }
 
 if (! function_exists('public_path')) {
-    function public_path($path = '')
+    /**
+     * Get the path to the public folder or a resource relative to its root
+     *
+     * @param string [$path] 
+     * @return string
+     */
+    function public_path($path = '') : string
     {
         return app_path($path);
     }
 }
 
 if (! function_exists('public_url')) {
-    function public_url($url = '')
+    /**
+     * Get the url to the public folder or a resource relative to its root
+     *
+     * @param string [$url] 
+     * @return string
+     */
+    function public_url($url = '') : string
     {
         return app_url($url);
     }
@@ -104,12 +151,17 @@ if (! function_exists('public_url')) {
 
 if (! function_exists('module_url')) {
     /**
-     * Get the uri to the application folder.
+     * Get the url for a module resource or its root
+     * 
+     * The module helper is simply building an URL according
+     * what's recommended as best practice for modules to 
+     * serve content.
      *
-     * @param  string  $uri
+     * @param string [$path] 
+     * @param string [$url] 
      * @return string
      */
-    function module_url($module, $url = '')
+    function module_url(string $module, $url = '') : string
     {
         return get_url('extensions.public').'/'.$module.($url ? '/'.$url : $url);
     }
@@ -117,82 +169,112 @@ if (! function_exists('module_url')) {
 
 if (! function_exists('storage_path')) {
     /**
-     * Get the path to the application folder.
+     * Get the path to the storage folder or a resource relative to its root
      *
-     * @param  string  $path
+     * @param string [$path] 
      * @return string
      */
-    function storage_path($path = '')
+    function storage_path($path = '') : string
     {
         return get_path('storage').($path ? '/'.$path : $path);
     }
 }
 
 if (! function_exists('get_path')) {
-    /**path
-     * Get the path to the application folder.
+    /**
+     * Get a specific named path registered with the application
      *
-     * @param  string  $path
+     * @param string $name
+     * @param string|null [$default]
      * @return string
      */
-    function get_path($path, $default = null)
+    function get_path($name, $default = null)
     {
-        return app()->paths()->get($path, $default);
+        return app()->paths()->get($name, $default);
     }
 }
 
 if (! function_exists('get_url')) {
     /**
-     * Get the uri to the application folder.
+     * Get a specific named URL registered with the application
      *
-     * @param  string  $uri
+     * @param string $name
+     * @param string|null [$default]
      * @return string
      */
-    function get_url($url, $default = null)
+    function get_url($name, $default = null)
     {
-        return app()->urls()->get($url, $default);
+        return app()->urls()->get($name, $default);
     }
 }
 
 if (! function_exists('config')) {
     /**
-     * Get / set the specified configuration value.
+     * Get the specified configuration value.
      *
-     * If an array is passed as the key, we will assume you want to set an array of values.
-     *
-     * @param  array|string  $key
-     * @param  mixed  $default
+     * @param string $key A key namespaced using dot-notation
+     * @param mixed [$default]
      * @return mixed
      */
-    function config($key, $default = null)
+    function config(string $key, $default = null)
     {
         return app('config')->get($key, $default);
     }
 }
 
 if (! function_exists('event')) {
-    function event($event, $payload = [])
+    /**
+     * Trigger an event
+     *
+     * @param string|object $event
+     * @param mixed [$payload]
+     * @param boolean [$halt]
+     * @return array|null
+     */
+    function event($event, $payload = [], $halt = false)
     {
-        return app()->getEventDispatcher()->dispatch($event, $payload);
+        return app()->getEventDispatcher()->dispatch($event, $payload, $halt);
     }
 }
 
 if (! function_exists('listen')) {
-    function listen($event, $handler)
+    /**
+     * Register an event listener
+     *
+     * @param string|array $events
+     * @param mixed $listener
+     * @return void
+     */
+    function listen($events, $listener) : void
     {
-        return app()->getEventDispatcher()->listen($event, $handler);
+        app()->getEventDispatcher()->listen($events, $listener);
     }
 }
 
 if (! function_exists('run_command')) {
-    function run_command($command)
+    /**
+     * Call a console command
+     *
+     * @param string $command
+     * @return int
+     */
+    function run_command(string $command) : int
     {
         return app()->runCommand($command);
     }
 }
 
 if (! function_exists('is_valid')) {
-    function is_valid($object)
+    /**
+     * Attempt to determine if the object is created correctly
+     * 
+     * Classes can implement \Soma\Contracts\ValidityChecking to make use of
+     * the this feature better.
+     *
+     * @param mixed $object
+     * @return boolean
+     */
+    function is_valid($object) : bool
     {
         if (($object instanceof \Soma\Contracts\ValidityChecking || method_exists($object, '__validate')) && $object->__validate()) {
             return true;
@@ -208,6 +290,17 @@ if (! function_exists('is_valid')) {
 /*--------------------------------------------------*/
 
 if (! function_exists('make_datetime')) {
+    /**
+     * Convert a date into a datetime
+     * 
+     * If a format isn't set then the DATE_FORMAT constant
+     * will be used, and if that isn't defined then DateTime::ISO8601
+     * will be used as fallback.
+     *
+     * @param string|int $date_str
+     * @param string|null [$format]
+     * @return \DateTime
+     */
     function make_datetime($date_str, $format = null)
     {
         if (empty($format)) {
@@ -224,6 +317,15 @@ if (! function_exists('make_datetime')) {
 }
 
 if (! function_exists('format_date')) {
+    /**
+     * Format a \DateTime
+     * 
+     * Will use DATE_FORMAT if defined and simply guess the format if not
+     *
+     * @param \DateTime $date
+     * @param string|null [$format]
+     * @return string
+     */
     function format_date($date, $format = null)
     {
         if (is_null($format) && defined('DATE_FORMAT')) {
@@ -239,7 +341,16 @@ if (! function_exists('format_date')) {
 }
 
 if (! function_exists('validate_date')) {
-    function validate_date($date, $format = null)
+    /**
+     * Determine if a date is valid
+     * 
+     * Will use DATE_FORMAT if defined and simply guess the format if not
+     *
+     * @param string $date
+     * @param string|null [$format]
+     * @return bool
+     */
+    function validate_date($date, $format = null) : bool
     {
         if (is_null($format) && defined('DATE_FORMAT')) {
             $format = DATE_FORMAT;
@@ -253,7 +364,15 @@ if (! function_exists('validate_date')) {
 /*--------------------------------------------------*/
 
 if (! function_exists('empty_dir')) {
-    function empty_dir($path, $recursive = true, $preserveDirs = false)
+    /**
+     * Empty the children of a directory
+     *
+     * @param string $path
+     * @param boolean [$recursive]
+     * @param boolean [$preserveDirs]
+     * @return boolean
+     */
+    function empty_dir($path, $recursive = true, $preserveDirs = false) : bool
     {
         if (! is_dir($path)) {
             return false;
@@ -280,7 +399,13 @@ if (! function_exists('empty_dir')) {
 }
 
 if (! function_exists('runlink')) {
-    function runlink($path)
+    /**
+     * Recursive unlink
+     *
+     * @param string $path
+     * @return bool
+     */
+    function runlink($path) : bool
     {
         if (! is_dir($path)) {
             return false;
@@ -298,7 +423,16 @@ if (! function_exists('runlink')) {
 }
 
 if (! function_exists('canonicalize_path')) {
-    function canonicalize_path($address)
+    /**
+     * Will resolve "../" and "./"
+     * 
+     * An alternative to using `realpath` if you wish to avoid
+     * resolving symlinks
+     *
+     * @param string $address
+     * @return string
+     */
+    function canonicalize_path($address) : string
     {
         $address = explode('/', $address);
         $keys = array_keys($address, '..');
@@ -315,6 +449,12 @@ if (! function_exists('canonicalize_path')) {
 }
 
 if (! function_exists('make_numeric')) {
+    /**
+     * Convert string to a numeric
+     *
+     * @param string $val
+     * @return int|float
+     */
     function make_numeric($val)
     {
         if (is_numeric($val)) {
@@ -326,7 +466,13 @@ if (! function_exists('make_numeric')) {
 }
 
 if (! function_exists('is_booly')) {
-    function is_booly($val)
+    /**
+     * Check whether a string has a "booly" value
+     *
+     * @param string $val
+     * @return boolean
+     */
+    function is_booly($val) : bool
     {
         switch (strtolower($val)) {
             case "y":
@@ -347,7 +493,13 @@ if (! function_exists('is_booly')) {
 }
 
 if (! function_exists('make_bool')) {
-    function make_bool($val)
+    /**
+     * Convert object into its boolean value
+     *
+     * @param mixed $val
+     * @return bool
+     */
+    function make_bool($val) : bool
     {
         if (is_bool($val)) {
             return $val;
@@ -373,6 +525,13 @@ if (! function_exists('make_bool')) {
 }
 
 if (! function_exists('ensure_dir_exists')) {
+    /**
+     * Creates directory recursively if it doesn't exist and returns it
+     *
+     * @param string $path
+     * @param integer $permissions
+     * @return string
+     */
     function ensure_dir_exists($path, $permissions = 0775)
     {
         if (! file_exists($path)) {
@@ -384,19 +543,27 @@ if (! function_exists('ensure_dir_exists')) {
 }
 
 if (! function_exists('is_url')) {
-    function is_url($url)
+    /**
+     * Checks whether a string is an URL
+     *
+     * @param string $url
+     * @return boolean
+     */
+    function is_url(string $url) : bool
     {
         return (filter_var($url, FILTER_VALIDATE_URL)) ? true : false;
     }
 }
 
 if (! function_exists('parse_attributes')) {
-    function parse_attributes($attr = array())
+    /**
+     * Combines an associative array into an HTML attribute string
+     *
+     * @param array $attr
+     * @return string
+     */
+    function parse_attributes(array $attr = []) : string
     {
-        if ( ! is_array($attr)) {
-            return '';
-        }
-
         return join(' ', array_map(function($key) use ($attr) {
            if (is_bool($attr[$key])) {
               return $attr[$key] ? $key : '';
@@ -413,7 +580,13 @@ if (! function_exists('parse_attributes')) {
 }
 
 if (! function_exists('common_path')) {
-    function common_path($paths)
+    /**
+     * Returns the lowest common directory of array of paths
+     *
+     * @param array $paths
+     * @return string
+     */
+    function common_path(array $paths) : string
     {
         $lastOffset = 1;
         $common = '/';
@@ -437,7 +610,13 @@ if (! function_exists('common_path')) {
 }
 
 if (! function_exists('remove_double_slashes')) {
-    function remove_double_slashes($path)
+    /**
+     * Remove double forward slashes from string
+     *
+     * @param string $path
+     * @return string
+     */
+    function remove_double_slashes(string $path) : string
     {
         $path = str_replace('//', '/', $path);
         $path = str_replace('//', '/', $path);
@@ -446,7 +625,15 @@ if (! function_exists('remove_double_slashes')) {
 }
 
 if (! function_exists('build_url')) {
-    function build_url(array $parts)
+    /**
+     * Construct an URL from an array
+     * 
+     * See PHP documentation for `parse_url`
+     *
+     * @param array $parts
+     * @return string
+     */
+    function build_url(array $parts) : string
     {
         return (isset($parts['scheme']) ? "{$parts['scheme']}:" : '') .
             ((isset($parts['user']) || isset($parts['host'])) ? '//' : '') .
@@ -464,9 +651,15 @@ if (! function_exists('build_url')) {
 /*--------------------------------------------------*/
 
 if (! function_exists('rel_path')) {
-    // Convert an absolute path to a relative
-    function rel_path($uri, $compareWith)
+    /**
+     * Convert an absolute path into a relative
+     *
+     * @param string $path
+     * @param string $compareWith
+     * @return string
+     */
+    function rel_path(string $path, string $compareWith) : string
     {
-        return ltrim(substr($uri, strlen($compareWith)), '/');
+        return ltrim(substr($path, strlen($compareWith)), '/');
     }
 }

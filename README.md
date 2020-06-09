@@ -23,9 +23,14 @@ composer create-project soma/project [project-directory]
 
 The required paths need to be created by the framework before you can run your application. You can do so either by executing `install()` on a configured instance of `Application` or by running the `app:install` command.
 
+```sh
+php appctrl app:install
+```
+
 ## Usage
 
 ### Setup
+
 All essential configuration can be set via the `Soma\Application` instance or by creating a `.env` file in the root of your project.
 
 ```sh
@@ -39,8 +44,6 @@ APP_STORAGE="/absolute/path/to/your/storage/folder"
 ```
 
 ```php
-<?php
-
 require __DIR__.'/../vendor/autoload.php';
 
 use Soma\Application;
@@ -59,8 +62,6 @@ Using the `.env` file is the recommended approach ([info](https://github.com/vlu
 
 **index.php**
 ```php
-<?php
-
 require __DIR__.'/../vendor/autoload.php';
 
 use Soma\Application;
@@ -73,7 +74,6 @@ $app->init(__DIR__);
 **appctrl**
 ```php
 #!/usr/bin/env php
-<?php
 
 require __DIR__.'/vendor/autoload.php';
 
@@ -92,7 +92,7 @@ Configuration files can be PHP files returning arrays (recommended) or JSON, YAM
 
 **config/app.php**
 ```php
-<?php return [
+return [
     'name' => 'My App',
     'version' => '1.0.0',
     'date-format' => '%Y-%m-%d',
@@ -137,7 +137,7 @@ $appName = config('app.name');
 The service providers are how you can modularly add in functionality to your application. The `ServiceProvider` class has been designed to be compatible with `Illuminate\Support\ServiceProvider` and should be able to register them as well as long as they don't call any Laravel specific code. It's also been designed according to the now deprecated [ContainerInterop](https://github.com/container-interop/service-provider) standard. Unfortunately the extension definitions have the arguments reversed in SOMA for compatibility with PHP-DI, the container library. A typical `ServiceProvider` may look like the following:
 
 ```php
-<?php namespace MyApp\Providers;
+namespace MyApp\Providers;
 
 use Soma\Store;
 use Soma\ServiceProvider;
@@ -147,12 +147,10 @@ use MyRouter;
 
 class RoutingProvider extends ServiceProvider
 {
-    public function boot(ContainerInterface $c) : void
+    public function ready(ContainerInterface $c) : void
     {
         if (! is_cli()) {
-            listen('app.ready', function(Event $e) use ($c) {
-                $c->get('router')->resolveRequest();
-            });
+            $c->get('router')->resolveRequest();
         }
     }
 
@@ -186,12 +184,14 @@ class RoutingProvider extends ServiceProvider
 
 All definitions from `getExtensions` are automatically wrapped with `DI\decorate` so that those changes gets applied whenever you resolve a definition from the container. However, you can use any [PHP-DI definition type](http://php-di.org/doc/php-definitions.html#definition-types) for both `getFactories` and `getExtensions` and the result of the latter isn't wrapped if it's already been wrapped by PHP-DI.
 
+Check out the [source code](https://github.com/soma-php/soma/blob/master/src/ServiceProvider.php) to see all *ServiceProvider* features.
+
 ### Commands
 
 The console engine is built on `Illuminate\Console` and the commands are defined in the same manner as in [Laravel 7.0](https://laravel.com/docs/7.0/artisan). For example:
 
 ```php
-<?php namespace MyApp\Commands;
+namespace MyApp\Commands;
 
 use Soma\Command;
 
@@ -247,7 +247,7 @@ All paths registered under the cache namespace (e.g. `cache.storage`) can be aut
 
 ### Helpers
 
-The file [helpers.php](https://github.com/soma-php/soma/blob/master/src/helpers.php) contain a couple of functions that are meant to simplify either calling app services or work with certain types of data. There's also useful classes for working with data-sets like `Soma\Store`, `Soma\Repository` and `Soma\Manifest`. The framework also depends on `illuminate\support` that provide [a whole bunch of helpers](https://github.com/illuminate/support/tree/826782d01ec7a0befe26b106713822df5933ee69) for you to make use of.
+The file [helpers.php](https://github.com/soma-php/soma/blob/master/src/helpers.php) contain a couple of functions that are meant to simplify either calling app services or work with certain types of data. There's also useful classes for working with data-sets like `Soma\Store`, `Soma\Repository` and `Soma\Manifest` (checkout the [source](https://github.com/soma-php/soma/tree/master/src)). The framework also depends on `illuminate\support` that provide [a whole bunch of helpers](https://github.com/illuminate/support/tree/826782d01ec7a0befe26b106713822df5933ee69) for you to make use of.
 
 ## License
 
